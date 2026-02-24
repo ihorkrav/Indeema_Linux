@@ -1,0 +1,6 @@
+/home/ihor/Desktop/Indeema_Course/Serial_Project/build/CMakeFiles/Indeema_Linux.dir
+/home/ihor/Desktop/Indeema_Course/Serial_Project/build/CMakeFiles/edit_cache.dir
+/home/ihor/Desktop/Indeema_Course/Serial_Project/build/CMakeFiles/rebuild_cache.dir
+/home/ihor/Desktop/Indeema_Course/Serial_Project/build/common/CMakeFiles/common.dir
+/home/ihor/Desktop/Indeema_Course/Serial_Project/build/common/CMakeFiles/edit_cache.dir
+/home/ihor/Desktop/Indeema_Course/Serial_Project/build/common/CMakeFiles/rebuild_cache.dir

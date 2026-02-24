@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/Indeema_Linux.dir/main.cpp.o -o Indeema_Linux  -Wl,-rpath,/usr/local/lib common/libcommon.a /usr/local/lib/libjsoncpp.so.1.9.7 /usr/local/lib/libserial.a /usr/local/lib/libjsoncpp.so.1.9.7 
