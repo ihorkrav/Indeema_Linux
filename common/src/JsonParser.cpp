@@ -1,59 +1,73 @@
 #include "JsonParser.hpp"
 #include <iostream>
+#include <unistd.h>
 
-void JsonParser::runEcho(const UartConfig& config) {
-    try {
-        serial::Serial mySerial(config.port, config.baudRate, 
-                                serial::Timeout::simpleTimeout(1000));
+// --- SerialManager Implementation ---
 
-        if (!mySerial.isOpen()) {
-            std::cerr << "Failed to open port: " << config.port << std::endl;
-            return;
-        }
+SerialManager::SerialManager(const UartConfig& config) 
+    : mySerial(config.port, config.baudRate, serial::Timeout::simpleTimeout(1000)) {}
 
-        std::cout << "UART Loopback Test Active on " << config.port << std::endl;
+bool SerialManager::isReady() { 
+    return mySerial.isOpen(); 
+}
 
-        // 1. Prepare a signal (JSON message) to send
-        std::string testSignal = "{\"status\": \"testing\", \"message\": \"Hello UART\"}\n";
+void SerialManager::send(const std::string& data) {
+    mySerial.write(data);
+}
 
-        while (true) {
-            // 2. Send the signal through TX
-            std::cout << "\n[TX]: Sending signal..." << std::endl;
-            mySerial.write(testSignal);
+std::string SerialManager::receive() {
+    if (mySerial.available()) {
+        return mySerial.readline(65536, "\n");
+    }
+    return "";
+}
 
-            // 3. Wait a moment for the hardware to process/loop back
-            // (Small sleep prevents saturating the CPU)
-            usleep(500000); // 500ms
+Json::Value SerialManager::runEcho(JsonParser& parser) {
+    if (!mySerial.isOpen()) {
+        std::cerr << "Port failure." << std::endl;
+        return Json::Value(); // Return empty object instead of 'return;'
+    }
 
-            // 4. Check if signal was received on RX
-            if (mySerial.available()) {
-                std::string receivedData = mySerial.readline(65536, "\n");
-                
-                // 5. Parse and Validate
-                Json::Value root;
-                if (this->parse(receivedData, root)) {
-                    std::cout << "[RX]: Success! Received valid JSON." << std::endl;
-                    this->logMessage(root);
-                } else {
-                    std::cerr << "[RX]: Received data, but JSON parsing failed!" << std::endl;
-                }
-            } else {
-                std::cerr << "[RX]: No data received. Check your TX-RX jumper wire!" << std::endl;
+    std::string testSignal = "{\"status\": \"testing\", \"message\": \"Hello UART\"}\n";
+
+    while (true) {
+        std::cout << "[TX]: Sending..." << std::endl;
+        mySerial.write(testSignal);
+        usleep(500000); 
+
+        std::string receivedData = receive();
+        if (!receivedData.empty()) {
+            Json::Value root;
+            if (parser.parse(receivedData, root)) {
+                std::cout << "[RX]: Valid JSON received." << std::endl;
+                return root; // Exits loop on success
             }
-
-            // Wait before next test cycle
-            sleep(2); 
+        } else {
+            std::cerr << "[RX]: No data. Check jumper!" << std::endl;
         }
-    } catch (const std::exception& e) {
-        std::cerr << "Serial Error: " << e.what() << std::endl;
+        sleep(2); 
     }
 }
 
-bool JsonParser::parse(const std::string& input, Json::Value& output) {
+// --- JsonParser Implementation ---
+
+void JsonParser::ParceEcho(const UartConfig& config) {
+    try {
+        SerialManager manager(config);
+        if (manager.isReady()) {
+            Json::Value result = manager.runEcho(*this);
+            logMessage(result);
+        }
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+    }
+}
+
+bool JsonParser::parse(const std::string& data, Json::Value& root) {
     Json::CharReaderBuilder builder;
-    auto reader = builder.newCharReader();
     std::string errs;
-    return reader->parse(input.c_str(), input.c_str() + input.size(), &output, &errs);
+    std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
+    return reader->parse(data.c_str(), data.c_str() + data.size(), &root, &errs);
 }
 
 void JsonParser::logMessage(const Json::Value& root) {
@@ -61,3 +75,4 @@ void JsonParser::logMessage(const Json::Value& root) {
     std::string jsonString = Json::writeString(writer, root);
     std::cout << "[LOG]: " << jsonString << std::endl;
 }
+
