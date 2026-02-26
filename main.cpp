@@ -1,8 +1,8 @@
 #include <libserial/SerialPort.h> // Include the serial library
 #include <iostream>
-#include <fstream>
 #include "JsonParser.hpp"
 #include <json/json.h>
+
 UartConfig loadConfig(const std::string& filename) {
     std::ifstream file(filename);
     Json::Value root;
@@ -21,7 +21,6 @@ UartConfig loadConfig(const std::string& filename) {
 
     return config;
 }
-
 int main(void){
     // Map to struct
     UartConfig config = loadConfig("config.json");
@@ -29,7 +28,8 @@ int main(void){
 
     // Task 5: UART Part
     JsonParser processor;
-    processor.runEcho(config);
+    for(;;)
+        processor.ParceEcho(config);
 
 
 
