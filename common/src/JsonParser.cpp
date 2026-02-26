@@ -76,22 +76,3 @@ void JsonParser::logMessage(const Json::Value& root) {
     std::cout << "[LOG]: " << jsonString << std::endl;
 }
 
-
-UartConfig loadConfig(const std::string& filename) {
-    std::ifstream file(filename);
-    Json::Value root;
-    UartConfig config;
-
-    if (file.is_open()) {
-        file >> root;
-
-        // Populate struct members
-        // Syntax: root.get("key", default_value).asType()
-        config.port = root.get("uart_port", "/dev/ttyUSB0").asString();
-        config.baudRate = root.get("baud_rate", 115200).asInt();        
-    } else {
-        throw std::runtime_error("Unable to open config file!");
-    }
-
-    return config;
-}

@@ -23,7 +23,7 @@ UartConfig loadConfig(const std::string& filename) {
 }
 int main(void){
     // Map to struct
-    UartConfig config = loadConfig("config.json");
+    UartConfig config = loadConfig("../config.json");
     
 
     // Task 5: UART Part
