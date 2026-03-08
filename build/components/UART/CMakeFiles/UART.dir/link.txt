@@ -1,0 +1,2 @@
+/usr/bin/ar qc libUART.a CMakeFiles/UART.dir/UART_Reader.cpp.o CMakeFiles/UART.dir/UART_Controller.cpp.o
+/usr/bin/ranlib libUART.a

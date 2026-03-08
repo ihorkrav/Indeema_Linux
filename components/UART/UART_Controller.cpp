@@ -33,9 +33,45 @@ void runEcho(const UartConfig& config) {
             std::cerr << "[RX]: No data received\n";
         }
 
-        sleep(2);
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
     }
 }
+
+
+void Read_Json(const UartConfig& config, int max_retries = 5) {
+    UARTReader uart(config);
+    JsonParser parser;
+
+    int attempts = 0;
+    bool success = false;
+
+    // Keep trying until we succeed or hit the retry limit
+    while (attempts < max_retries && !success) {
+        if (uart.hasData()) {
+            std::string received = uart.readLine();
+
+            if (parser.parseMessage(received)) {
+                std::cout << "[RX]: Valid JSON received\n";
+               
+                
+            } else {
+                std::cerr << "[RX]: Received malformed JSON, retrying...\n";
+            }
+        } else {
+            std::cerr << "[RX]: Timeout, no data. Attempt " << (attempts + 1) << "/" << max_retries << "\n";
+        }
+
+        attempts++;
+        if (!success) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        }
+    }
+
+    if (!success) {
+        std::cerr << "[RX]: Failed to receive valid data after " << max_retries << " attempts.\n";
+    }
+}
+
 
 
 

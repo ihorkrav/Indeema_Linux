@@ -1,0 +1,2 @@
+/usr/bin/ar qc libMQTT.a CMakeFiles/MQTT.dir/MQTT.cpp.o
+/usr/bin/ranlib libMQTT.a

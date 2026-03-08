@@ -1,7 +1,7 @@
 
 #pragma once
-#include <json/json.h>      // THIS IS THE MISSING LINK FOR JSONCPP
-#include <serial/serial.h>  // THIS IS THE MISSING LINK FOR SERIAL
+#include <json/json.h>      
+#include <serial/serial.h>  
 #include <unistd.h>
 #include <iostream>
 

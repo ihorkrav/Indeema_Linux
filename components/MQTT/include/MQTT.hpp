@@ -2,6 +2,6 @@
  #include "../../JsonParser/include/JsonParser.hpp" // this is needed to avoid conflict between c++17 and c++14 standards
   
 
-void MQTT_PUBLISH();
+void MQTT_PUBLISH(int r, int g, int b);
 mqtt::async_client create_and_connect(const std::string& address, const std::string& id);
 void publish_json(mqtt::async_client& client, const std::string& topic, const Json::Value& json_data);

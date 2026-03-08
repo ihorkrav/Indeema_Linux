@@ -21,13 +21,8 @@ void publish_json(mqtt::async_client& client, const std::string& topic, std::str
 }
 
 // 3. Orchestration function with RGB input
-void MQTT_PUBLISH() {
-    int r, g, b;
-    std::cout << "Enter RGB values (0-255) separated by spaces: ";
-    if (!(std::cin >> r >> g >> b)) {
-        std::cerr << "Invalid input." << std::endl;
-        return;
-    }
+void MQTT_PUBLISH(int r, int g, int b) {
+    
 
     // Build the JSON object
     std::string data = make_rgb_json(r, g, b);
