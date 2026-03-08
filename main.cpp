@@ -2,8 +2,8 @@
 #include "UART_Controller.hpp"
 #include "MQTT.hpp"
 
-// Map to struct
 UartConfig config = loadConfig("../config.json");
+
 int getValidColorValue(const std::string& colorName) {
     int value;
     while (true) {
@@ -34,10 +34,6 @@ void get_rgb_input(int* r, int* g, int* b) {
 }
 int main(void){
 
-    
-
-    // Task 5: UART Part
-    
     int r, g, b;
     get_rgb_input(&r,  &g,  &b);
 
