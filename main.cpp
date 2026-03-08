@@ -34,15 +34,24 @@ void get_rgb_input(int* r, int* g, int* b) {
 }
 int main(void){
 
-    int r, g, b;
-    get_rgb_input(&r,  &g,  &b);
-
-   
     
-    MQTT_PUBLISH(r, g ,b);
-    std::cout << "Publish called" << std::endl;
+    // UART reading thread
+    std::thread uart_thread([]() {
+        while (true) {
+            Read_Json(config, 5);   // assuming this reads UART and prints data
+        }
+    });
+
+    // Main thread handles user input + MQTT
+    while (true) {
+        int r, g, b;
+
+        get_rgb_input(&r, &g, &b);
+
+        MQTT_PUBLISH(r, g, b);
+
+    }
+
+    uart_thread.join();
     return 0;
-
-
-    // runEcho(config);
 }

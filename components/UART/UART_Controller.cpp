@@ -40,38 +40,27 @@ void runEcho(const UartConfig& config) {
 
 void Read_Json(const UartConfig& config, int max_retries = 5) {
     UARTReader uart(config);
-    JsonParser parser;
 
-    int attempts = 0;
-    bool success = false;
+    while (true) {
 
-    // Keep trying until we succeed or hit the retry limit
-    while (attempts < max_retries && !success) {
         if (uart.hasData()) {
+
             std::string received = uart.readLine();
 
-            if (parser.parseMessage(received)) {
-                std::cout << "[RX]: Valid JSON received\n";
-               
-                
-            } else {
-                std::cerr << "[RX]: Received malformed JSON, retrying...\n";
+            int r, g, b;
+
+            if (sscanf(received.c_str(), "R:%d G:%d B:%d", &r, &g, &b) == 3) {
+                std::cout << "[UART RX] "
+                          << "R=" << r
+                          << " G=" << g
+                          << " B=" << b
+                          << std::endl;
             }
-        } else {
-            std::cerr << "[RX]: Timeout, no data. Attempt " << (attempts + 1) << "/" << max_retries << "\n";
+            else {
+                std::cerr << "[UART RX] Invalid message: " << received << std::endl;
+            }
         }
 
-        attempts++;
-        if (!success) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        }
-    }
-
-    if (!success) {
-        std::cerr << "[RX]: Failed to receive valid data after " << max_retries << " attempts.\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }
-
-
-
-
