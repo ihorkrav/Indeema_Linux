@@ -7,18 +7,18 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #find_package(REQUIRED jsoncpp)
 
 add_library(UART STATIC
-UART_Reader.cpp
-UART_Controller.cpp
+    UART_Reader.cpp
+    UART_Controller.cpp
 )
+
 target_include_directories(UART
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    jsoncpp
 )
 
 target_link_libraries(UART
     PUBLIC
-    /usr/local/lib/libserial.a
+    JsonParser
     jsoncpp
 )
 

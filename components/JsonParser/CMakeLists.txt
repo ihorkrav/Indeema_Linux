@@ -10,7 +10,6 @@ add_library(JsonParser STATIC
 target_include_directories(JsonParser
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    /usr/local/include
 )
 
 target_link_libraries(JsonParser 

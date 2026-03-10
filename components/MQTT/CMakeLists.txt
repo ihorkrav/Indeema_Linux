@@ -9,7 +9,6 @@ add_library(MQTT STATIC MQTT.cpp)
 target_include_directories(MQTT
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
-    /usr/local/include
 )
 
 # Link against the Paho MQTT C++ library

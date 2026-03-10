@@ -1,12 +1,9 @@
-cmake_minimum_required(VERSION 3.10)
-
 project(Indeema_Linux)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF) # Important for binary compatibility
-set(CMAKE_FIND_LIBRARY_PREFIXES "lib")
-set(CMAKE_FIND_LIBRARY_SUFFIXES ".a" ".so")
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 add_subdirectory(components)
 
 add_executable(Indeema_Linux main.cpp)
@@ -16,5 +13,4 @@ target_link_libraries(Indeema_Linux
     UART
     MQTT
     JsonParser
- 
 )
