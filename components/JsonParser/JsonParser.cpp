@@ -1,4 +1,5 @@
 #include "JsonParser.hpp"
+#include "JsonParser.hpp"
 
 bool JsonParser::parseMessage(const std::string& message) {
     Json::Value root;

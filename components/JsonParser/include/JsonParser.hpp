@@ -1,7 +1,7 @@
 
 #pragma once
 #include <json/json.h>      
-#include <serial/serial.h>  
+#include <libserialport.h>
 #include <unistd.h>
 #include <iostream>
 
