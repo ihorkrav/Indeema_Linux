@@ -1,8 +1,10 @@
 #include <iostream>
+#include <libgen.h> 
+#include <unistd.h>
+#include <limits.h>
 #include "UART_Controller.hpp"
 #include "MQTT.hpp"
 
-UartConfig config = loadConfig("../config.json");
 
 int getValidColorValue(const std::string& colorName) {
     int value;
@@ -32,15 +34,27 @@ void get_rgb_input(int* r, int* g, int* b) {
     
     std::cout << "RGB set to: (" << *r << ", " << *g << ", " << *b << ")" << std::endl;
 }
+
+std::string getExecutableDir() {
+    char buffer[PATH_MAX];
+    ssize_t count = readlink("/proc/self/exe", buffer, PATH_MAX);
+    if (count != -1) {
+        return std::string(dirname(buffer));
+    }
+    return "."; // Fallback to current directory
+}
 int main(void){
 
+    std::string configPath = getExecutableDir() + "/config.json";
     
+    // Load the config
+    UartConfig config = loadConfig(configPath.c_str());
     // UART reading thread
-    std::thread uart_thread([]() {
-        while (true) {
-            Read_Json(config, 5);   // assuming this reads UART and prints data
-        }
-    });
+    std::thread uart_thread([&config]() {
+    while (true) {
+        Read_Json(config, 5);
+    }
+});
 
     // Main thread handles user input + MQTT
     while (true) {
