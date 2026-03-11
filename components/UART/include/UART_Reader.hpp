@@ -1,18 +1,24 @@
 #pragma once
+
 #include <fstream>
+#include <string>
 #include <json/json.h>
 
-#include <string>
-#include <serial/serial.h>
+#include <libserialport.h>
+#include <stdexcept>
+#include <vector>
+
 struct UartConfig {
     std::string port;
     int baudRate;
 };
+
 UartConfig loadConfig(const std::string& filename);
 
 class UARTReader {
 public:
     UARTReader(const UartConfig& config);
+    ~UARTReader();
 
     bool isOpen() const;
     void send(const std::string& data);
@@ -20,5 +26,5 @@ public:
     std::string readLine();
 
 private:
-    serial::Serial serialPort;
+    struct sp_port* port = nullptr;
 };

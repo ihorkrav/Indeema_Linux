@@ -2,24 +2,75 @@
 
 
 UARTReader::UARTReader(const UartConfig& config)
-    : serialPort(config.port, config.baudRate, 
-                 serial::Timeout::simpleTimeout(1000)) {}
+{
+    if (sp_get_port_by_name(config.port.c_str(), &port) != SP_OK)
+        throw std::runtime_error("Failed to get serial port");
 
-// Method implementations
-bool UARTReader::isOpen() const {
-    return serialPort.isOpen();
+    if (sp_open(port, SP_MODE_READ_WRITE) != SP_OK)
+        throw std::runtime_error("Failed to open serial port");
+
+    sp_set_baudrate(port, config.baudRate);
+    sp_set_bits(port, 8);
+    sp_set_parity(port, SP_PARITY_NONE);
+    sp_set_stopbits(port, 1);
+    sp_set_flowcontrol(port, SP_FLOWCONTROL_NONE);
 }
 
-void UARTReader::send(const std::string& data) {
-    serialPort.write(data);
+UARTReader::~UARTReader()
+{
+    if (port) {
+        sp_close(port);
+        sp_free_port(port);
+    }
 }
 
-bool UARTReader::hasData() {
-    return serialPort.available() > 0;
+bool UARTReader::isOpen() const
+{
+    return port != nullptr;
 }
 
-std::string UARTReader::readLine() {
-    return serialPort.readline(65536, "\n");
+void UARTReader::send(const std::string& data)
+{
+    if (!port)
+        throw std::runtime_error("Serial port not open");
+
+    sp_blocking_write(port, data.c_str(), data.size(), 1000);
+}
+
+bool UARTReader::hasData()
+{
+    if (!port)
+        return false;
+
+    return sp_input_waiting(port) > 0;
+}
+
+std::string UARTReader::readLine()
+{
+    if (!port)
+        throw std::runtime_error("Serial port not open");
+
+    std::string result;
+    char ch;
+
+    while (true)
+    {
+        int bytes = sp_blocking_read(port, &ch, 1, 1000);
+
+        if (bytes > 0)
+        {
+            if (ch == '\n')
+                break;
+
+            result += ch;
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    return result;
 }
 
 UartConfig loadConfig(const std::string& filename)
